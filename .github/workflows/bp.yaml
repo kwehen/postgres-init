@@ -1,10 +1,10 @@
-name: ci
+name: postgres-init-build
 
 on:
   push:
 
 jobs:
-  backend:
+  postgres:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -31,6 +31,6 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        platforms: linux/amd64
+        platforms: linux/amd64, linux/arm64
         push: true
         tags: ghcr.io/kwehen/postgres-init:latest
