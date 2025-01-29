@@ -17,11 +17,12 @@ func main() {
 		log.Printf("Could not load .env file: %v", err)
 	}
 
-	var db_user string = os.Getenv("DB_USER")
-	var db_root_pw string = os.Getenv("DB_ROOT_PW")
-	var db_host string = os.Getenv("DB_HOST")
-	var db_name string = os.Getenv("DB_NAME")
-	var app_db_user string = os.Getenv("APP_DB_USER")
+	db_user := os.Getenv("DB_USER")
+	db_root_pw := os.Getenv("DB_ROOT_PW")
+	db_host := os.Getenv("DB_HOST")
+	db_name := os.Getenv("DB_NAME")
+	app_db_user := os.Getenv("APP_DB_USER")
+	app_db_pw := os.Getenv("APP_DB_PW")
 
 	connStr := "postgres://" + db_user + ":" + db_root_pw + "@" + db_host + "/postgres?sslmode=disable"
 
@@ -32,7 +33,7 @@ func main() {
 	log.Print("DB Connection Made")
 	defer db.Close()
 
-	query := fmt.Sprintf("CREATE ROLE %s WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS CONNECTION LIMIT -1", pq.QuoteIdentifier(app_db_user))
+	query := fmt.Sprintf("CREATE ROLE %s WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS CONNECTION LIMIT -1 PASSWORD = '%s' ", pq.QuoteIdentifier(app_db_user), pq.QuoteIdentifier(app_db_pw))
 	_, err = db.Exec(query)
 	if err != nil {
 		log.Fatalf("Error creating role %s: %v", app_db_user, err)
