@@ -33,8 +33,8 @@ func main() {
 	log.Print("DB Connection Made")
 	defer db.Close()
 
-	query := fmt.Sprintf("CREATE ROLE %s WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS CONNECTION LIMIT -1 PASSWORD = '%s' ", pq.QuoteIdentifier(app_db_user), pq.QuoteIdentifier(app_db_pw))
-	_, err = db.Exec(query)
+	query := fmt.Sprintf("CREATE ROLE %s WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS CONNECTION LIMIT -1 PASSWORD = ($1)", pq.QuoteIdentifier(app_db_user))
+	_, err = db.Exec(query, app_db_pw)
 	if err != nil {
 		log.Fatalf("Error creating role %s: %v", app_db_user, err)
 	}
