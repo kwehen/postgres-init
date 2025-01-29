@@ -1,6 +1,8 @@
 # Start from the golang base image
 FROM golang:1.23-bullseye AS builder
 
+LABEL org.opencontainers.image.source = "https://github.com/kwehen/postgres-init"
+
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
