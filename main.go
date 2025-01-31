@@ -33,6 +33,16 @@ func main() {
 	log.Print("DB Connection Made")
 	defer db.Close()
 
+	exists, err := databaseExists(db, db_name)
+	if err != nil {
+		log.Fatalf("Error checking if database %s exists", db_name)
+	}
+
+	if exists {
+		log.Printf("Database %s exists, exiting...", db_name)
+		return
+	}
+
 	query := fmt.Sprintf("CREATE ROLE %s WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS CONNECTION LIMIT -1 PASSWORD '%s'", pq.QuoteIdentifier(app_db_user), app_db_pw)
 	log.Printf("%s", query)
 	_, err = db.Exec(query)
@@ -48,4 +58,11 @@ func main() {
 	}
 	log.Printf("%s database created", db_name)
 
+}
+
+func databaseExists(db *sql.DB, dbName string) (bool, error) {
+	var exists bool
+	query := "SELECT EXISTS(SELECT 1 FROM pg_database WHERE datname = $1);"
+	err := db.QueryRow(query, dbName).Scan(&exists)
+	return exists, err
 }
